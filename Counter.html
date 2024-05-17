@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Countdown Timer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 40px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 28px;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-size: 18px;
+      color: #555;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    input[type="datetime-local"] {
+      font-size: 16px;
+      padding: 10px;
+      margin-top: 8px;
+      width: calc(100% - 20px);
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    button[type="submit"] {
+      font-size: 18px;
+      padding: 10px 20px;
+      margin-top: 20px;
+      background-color: #4CAF50;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #45a049;
+    }
+
+    #timer {
+      font-size: 24px;
+      color: #4CAF50;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Countdown Timer</h1>
+    <form id="countdownForm">
+      <label for="datetime">Select target date and time:</label>
+      <input type="datetime-local" id="datetime" required>
+      <button type="submit">Start Countdown</button>
+    </form>
+    <div id="timer"></div>
+  </div>
+
+  <script>
+    document.getElementById('countdownForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const targetDate = new Date(document.getElementById('datetime').value).getTime();
+      
+      if (isNaN(targetDate)) {
+        alert('Please enter a valid date and time!');
+        return;
+      }
+
+      const countdownInterval = setInterval(function() {
+        const currentDate = new Date().getTime();
+        const distance = targetDate - currentDate;
+
+        if (distance <= 0) {
+          clearInterval(countdownInterval);
+          document.getElementById('timer').innerHTML = 'Countdown expired!';
+          return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById('timer').innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      }, 1000);
+    });
+  </script>
+</body>
+</html>
