@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Count Game</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #6495ED;
+            background-size: cover;
+            animation: pulseBackground 5s infinite alternate;
+        }
+
+        @keyframes pulseBackground {
+            from {
+                filter: brightness(1);
+            }
+            to {
+                filter: brightness(1.2);
+            }
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .input-container, .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1s ease;
+            max-width: 90%; /* Adjust maximum width for better mobile layout */
+        }
+
+        input, button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            cursor: pointer;
+            animation: pulseButton 1.5s infinite alternate;
+            margin-top: 10px; /* Add margin between buttons */
+        }
+
+        button:hover {
+            filter: brightness(1.2);
+        }
+
+        input[type="number"] {
+            width: 60px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #a11616;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #df1010;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        #scores {
+            margin-top: 20px;
+            color: #ffffff;
+            font-size: 16px;
+        }
+
+        table {
+            margin: 0 auto;
+            border-collapse: collapse;
+            width: 100%; /* Adjust table width for mobile */
+            max-width: 800px;
+            background-color: rgba(154, 113, 113, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: slideIn 1s ease;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #f80000;
+        }
+
+        th {
+            background-color: #ff0000;
+        }
+
+        .player {
+            padding: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .player1 {
+            background-color: #5cb85c;
+        }
+
+        .player2 {
+            background-color: #f0ad4e;
+        }
+
+        .player3 {
+            background-color: #5bc0de;
+        }
+
+        .player4 {
+            background-color: #d9534f;
+        }
+
+        .max-points {
+            background-color: #d9534f !important;
+            color: white;
+        }
+
+        .min-points {
+            background-color: #5cb85c !important;
+            color: white;
+        }
+
+        @keyframes pulse {
+            from {
+                transform: scale(1);
+            }
+            to {
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulseButton {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .red-button {
+            background-color: #FF0000;
+            color: white;
+        }
+
+        .white-button {
+            background-color: #FFFFFF;
+            color: #000000;
+        }
+
+        .yellow-button {
+            background-color: #FFFF00;
+            color: #000000;
+        }
+
+        .green-button {
+            background-color: #008000;
+            color: white;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button onclick="endGame()" class="red-button">End Game</button>
+        <button onclick="clearScores()" class="white-button">Clear</button>
+
+        <div class="input-container">
+            <h2>Welcome to the Heart Count Game</h2>
+            <p>Enter players' names below and start the game!</p>
+            <input type="text" id="player1" placeholder="Player 1">
+            <input type="text" id="player2" placeholder="Player 2">
+            <input type="text" id="player3" placeholder="Player 3">
+            <input type="text" id="player4" placeholder="Player 4">
+            <button onclick="startGame()" class="green-button">Start Game</button>
+        </div>
+
+        <div class="game-container" style="display: none;">
+            <h2>Game in Progress</h2>
+            <div id="scores"></div>
+            <div id="roundInput">
+                <h3>Enter Points for Round:</h3>
+                <p>Enter points for each player:</p>
+                <input type="number" id="player1Points" min="0" max="25" placeholder="Player 1">
+                <input type="number" id="player2Points" min="0" max="25" placeholder="Player 2">
+                <input type="number" id="player3Points" min="0" max="25" placeholder="Player 3">
+                <input type="number" id="player4Points" min="0" max="25" placeholder="Player 4">
+                <button onclick="playRound()" class="green-button">Submit</button>
+                <button onclick="undoRound()" class="yellow-button">&#8630; </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let players = [];
+        let scores = {};
+        let blackQueens = {};
+        let round = 1;
+        let gameInProgress = false;
+        let lastRoundScores = {};
+        let lastRoundBlackQueenPlayer = "";
+        let blackQueensByRound = {}; // Store black queens count by round
+
+        function startGame() {
+            const player1 = document.getElementById('player1').value.trim();
+            const player2 = document.getElementById('player2').value.trim();
+            const player3 = document.getElementById('player3').value.trim();
+            const player4 = document.getElementById('player4').value.trim();
+
+            if (!player1 || !player2 || !player3 || !player4) {
+                alert("Please enter all players' names.");
+                return;
+            }
+
+            players = [player1, player2, player3, player4];
+            scores = {};
+            blackQueens = {};
+            blackQueensByRound = {}; // Reset black queens count by round
+            players.forEach(player => {
+                scores[player] = { points: [], total: 0 };
+                blackQueens[player] = 0;
+            });
+
+            document.querySelector('.input-container').style.display = 'none';
+            document.querySelector('.game-container').style.display = 'block';
+            gameInProgress = true;
+
+            displayScores();
+        }
+
+        function playRound() {
+            if (!gameInProgress) {
+                alert("Please start the game first.");
+                return;
+            }
+
+            const player1Points = parseInt(document.getElementById('player1Points').value);
+            const player2Points = parseInt(document.getElementById('player2Points').value);
+            const player3Points = parseInt(document.getElementById('player3Points').value);
+            const player4Points = parseInt(document.getElementById('player4Points').value);
+            const points = [player1Points, player2Points, player3Points, player4Points];
+            const maxPoints = Math.max(...points);
+            const winningPlayerIndex = points.indexOf(maxPoints);
+            const blackQueenPlayer = players[winningPlayerIndex];
+
+            if (isNaN(player1Points) || isNaN(player2Points) || isNaN(player3Points) || isNaN(player4Points)) {
+                alert("Please enter valid points for all players.");
+                return;
+            }
+
+            const totalPoints = player1Points + player2Points + player3Points + player4Points;
+            if (totalPoints !== 25) {
+                alert("Total points for the round must be 25.");
+                return;
+            }
+
+            lastRoundScores = { ...scores };
+            lastRoundBlackQueenPlayer = blackQueenPlayer;
+
+            scores[players[0]].points.push(player1Points);
+            scores[players[1]].points.push(player2Points);
+            scores[players[2]].points.push(player3Points);
+            scores[players[3]].points.push(player4Points);
+
+            if (!blackQueensByRound[round]) {
+                blackQueensByRound[round] = {}; // Initialize black queens count for the round
+            }
+            blackQueensByRound[round][blackQueenPlayer] = (blackQueensByRound[round][blackQueenPlayer] || 0) + 1;
+
+            for (const player of players) {
+                scores[player].total += player === players[0] ? player1Points :
+                                        player === players[1] ? player2Points :
+                                        player === players[2] ? player3Points :
+                                        player === players[3] ? player4Points : 0;
+            }
+
+            displayScores();
+
+            if (checkForWinner()) {
+                gameInProgress = false;
+                document.querySelector('#roundInput').style.display = 'none';
+            } else {
+                round++;
+            }
+        }
+
+        function undoRound() {
+            if (!gameInProgress) {
+                alert("No game in progress.");
+                return;
+            }
+
+            if (round === 1) {
+                alert("Cannot undo the first round.");
+                return;
+            }
+
+            players.forEach(player => {
+                const lastRoundPlayerPoints = lastRoundScores[player].points.pop();
+                scores[player].total -= lastRoundPlayerPoints;
+            });
+
+            const lastRoundBlackQueens = blackQueensByRound[round - 1];
+            if (lastRoundBlackQueens) {
+                Object.keys(lastRoundBlackQueens).forEach(player => {
+                    if (blackQueensByRound[round - 1][player] > 0) {
+                        blackQueensByRound[round - 1][player]--; // Decrement black queens count for the round if greater than 0
+                    }
+                });
+            }
+
+            round--;
+
+            displayScores();
+        }
+
+        function endGame() {
+            if (confirm("Are you sure you want to end the game?")) {
+                gameInProgress = false;
+                document.querySelector('.game-container').style.display = 'none';
+                document.querySelector('.input-container').style.display = 'flex';
+                round = 1;
+                clearScores();
+            }
+        }
+
+        function clearScores() {
+            players.forEach(player => {
+                scores[player].points = [];
+                scores[player].total = 0;
+            });
+            blackQueensByRound = {};
+            displayScores();
+        }
+
+        function displayScores() {
+            const scoresDiv = document.getElementById('scores');
+            scoresDiv.innerHTML = `<h3>Round ${round} Scores:</h3>`;
+            const table = `
+                <table>
+                    <tr>
+                        <th>Player</th>
+                        <th>Total Points</th>
+                        <th>Black Queens</th>
+                        ${Array.from({ length: round }, (_, i) => `<th>Round ${i + 1}</th>`).join('')}
+                    </tr>
+                    ${players.map(player => `
+                        <tr class="player ${getPlayerClass(player)}">
+                            <td>${player}</td>
+                            <td>${scores[player].total}</td>
+                            <td>${getBlackQueensCount(player)}</td>
+                            ${scores[player].points.map(point => `<td>${point}</td>`).join('')}
+                            ${Array.from({ length: round - scores[player].points.length }).map(() => '<td></td>').join('')}
+                        </tr>
+                    `).join('')}
+                </table>
+            `;
+            scoresDiv.innerHTML += table;
+        }
+
+        function getBlackQueensCount(player) {
+            let count = 0;
+            for (let i = 1; i <= round; i++) {
+                if (blackQueensByRound[i] && blackQueensByRound[i][player]) {
+                    count += blackQueensByRound[i][player];
+                }
+            }
+            return count;
+        }
+
+        function checkForWinner() {
+            for (const player of players) {
+                if (scores[player].total >= 100) {
+                    alert(`OOPS! ${player} Loses the game!`);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function getPlayerClass(player) {
+            const sortedPlayers = players.slice().sort((a, b) => scores[b].total - scores[a].total);
+            const index = sortedPlayers.indexOf(player);
+            if (index === 0) {
+                return 'player1 max-points';
+            } else if (index === sortedPlayers.length - 1) {
+                return 'player4 min-points';
+            } else {
+                return `player${index + 1}`;
+            }
+        }
+    </script>
+</body>
+</html>
